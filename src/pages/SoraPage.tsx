@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -11,7 +10,6 @@ import {
   IconCheck,
   IconX,
   IconVideo,
-  IconImage,
   IconUsers,
   IconSettings,
 } from '@/components/ui/icons';
@@ -25,8 +23,7 @@ interface ConnectionState {
 }
 
 export function SoraPage() {
-  const { t } = useTranslation();
-  const notify = useNotificationStore((s) => s.notify);
+  const showNotification = useNotificationStore((s) => s.showNotification);
 
   const [config, setConfig] = useState<SoraConfig>({
     enabled: false,
@@ -82,12 +79,12 @@ export function SoraPage() {
     setSaving(true);
     const success = await soraConfigApi.saveConfig(config);
     if (success) {
-      notify({ type: 'success', message: '配置已保存' });
+      showNotification('配置已保存', 'success');
       if (config.enabled) {
         await testConnection(config);
       }
     } else {
-      notify({ type: 'error', message: '保存配置失败' });
+      showNotification('保存配置失败', 'error');
     }
     setSaving(false);
   };
@@ -98,7 +95,7 @@ export function SoraPage() {
     const newStats = await soraApiClient.getStats();
     if (newStats) {
       setStats(newStats);
-      notify({ type: 'success', message: '统计已刷新' });
+      showNotification('统计已刷新', 'success');
     }
   };
 
@@ -110,7 +107,7 @@ export function SoraPage() {
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <LoadingSpinner size="large" />
+        <LoadingSpinner size={28} />
       </div>
     );
   }
@@ -181,7 +178,7 @@ export function SoraPage() {
             >
               {connection.status === 'testing' ? (
                 <>
-                  <LoadingSpinner size="small" />
+                  <LoadingSpinner size={14} />
                   测试中...
                 </>
               ) : (
@@ -210,7 +207,7 @@ export function SoraPage() {
             >
               {connection.status === 'connected' && <IconCheck />}
               {connection.status === 'error' && <IconX />}
-              {connection.status === 'testing' && <LoadingSpinner size="small" />}
+              {connection.status === 'testing' && <LoadingSpinner size={14} />}
               <span>{connection.message}</span>
             </div>
           )}

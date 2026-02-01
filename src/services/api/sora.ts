@@ -3,8 +3,6 @@
  * 用于连接和管理 Sora2API 服务
  */
 
-import { apiClient } from './client';
-
 export interface SoraConfig {
   enabled: boolean;
   baseUrl: string;
